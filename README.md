@@ -14,6 +14,6 @@ user.powershell@proj-root> $env:HOME = $env:USERPROFILE
 user.powershell@proj-root> pm2 install pm2-logrotate
 ```
 
-#References
+# References
 - https://github.com/genxium/pm2-cluster-mode-logging-prac.
 - https://github.com/genxium/nodejs-cluster-prac, for comparison.
