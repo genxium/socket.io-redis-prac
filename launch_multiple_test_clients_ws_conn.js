@@ -9,7 +9,7 @@ const Promise = require('bluebird');
 
 let childProcesses = [];
 
-let uidRoomidPairs = [[7, 9], [8, 9], [1, 19], [2, 18], [1, 18], [2, 19]];
+let uidRoomidPairs = [[7, 9], [8, 9], [1, 19], [2, 18], [1, 18], [2, 19], [2, 18], [1, 18], [2, 19]];
 
 logger.info(util.format("About to launch %s child-processes.", uidRoomidPairs.length));
 
@@ -17,7 +17,9 @@ Promise.reduce(uidRoomidPairs, function(total, pair) {
   logger.info(util.format("About to launch with params (%s %s).", pair[0], pair[1]));
   const cmd = util.format('node');
   const cpCmdArgs = [baseAbsPath + "./test_client_ws_conn.js", pair[0], pair[1]];
-  const cp = child_process.spawn(cmd, cpCmdArgs); 
+  const cp = child_process.spawn(cmd, cpCmdArgs, {
+    stdio: 'inherit'
+  }); 
   logger.info(util.format("Started child process pid == %s.", cp.pid));
   childProcesses.push(cp);
   return ++total;

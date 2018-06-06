@@ -90,7 +90,7 @@ http.listen(port, function() {
     const roomid = parseInt(wsSession.handshake.query.roomid);
     logger.info(util.format("Uid == %s is requesting to join roomid == %s via pid == %s.", uid, roomid, process.pid));
 
-    theAdapter.remoteJoin(uid, roomid, (err) => {
+    theAdapter.remoteJoin(wsSession.id, roomid, (err) => {
       if (err) { 
         logger.error(err);
         return;
@@ -108,7 +108,8 @@ http.listen(port, function() {
     });
 
     wsSession.on('disconnect', (reason) => {
-      logger.warn(util.format("Uid == %s is leaving roomid == %s from pid == %s.", uid, roomid, process.pid));
+      // There's no need to invoke `theAdapter.remoteLeave` for each joined `roomid` manually.
+      logger.info(util.format("Uid == %s has left roomid == %s via pid == %s.", uid, roomid, process.pid));
     });
   });
 

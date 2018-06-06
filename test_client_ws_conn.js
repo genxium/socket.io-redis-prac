@@ -21,6 +21,12 @@ logger.debug('Url to connect is ' + urlToConnect);
 
 const socket = require('socket.io-client')(urlToConnect, {
   path: '/sio',
+  /* Unfortunately, due to an unknown reason (could be implementation specific for `socket.io-client` or `socket.io-server` or `socket.io-redis`), the
+   * following configuration of `transports` is COMPULSORY to make the "stateful load-balancing" work here in this repository.
+   * 
+   * This is NOT LIKELY a general constraint for all implementations, see "https://github.com/genxium/nodejs-cluster-prac" for comparison and more information.
+   */
+  transports: ['websocket'], 
   query: 'userid=' + userid + '&roomid=' + roomid 
 });
 
