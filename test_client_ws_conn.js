@@ -13,7 +13,7 @@ if (2 > argv.length) {
 }
 
 const host = 'localhost';
-const urlToConnect = constants.HTTP_PROTO + '://' + host + constants.HTTP_PORT;
+const urlToConnect = 'http://' + host + ":9099";
 const userid = argv[0];
 const roomid = argv[1];
 

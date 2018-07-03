@@ -3,7 +3,6 @@ const baseAbsPath = __dirname + '/';
 const Logger = require(baseAbsPath + "utils/Logger");
 const logger = Logger.instance.getLogger();
 const util = require('util');
-const cluster = require('cluster');
 const crypto = require('crypto');
 function randomEleFromArray(arr) {
   const buf = Buffer.from(crypto.randomBytes(4));
@@ -75,7 +74,7 @@ app.get(constants.ROUTE_PATHS.BASE + constants.ROUTE_PATHS.REGEX + constants.ROU
   res.json(toRet);
 });
 
-const port = constants.PORT;
+const port = 9099;
 http.listen(port, function() {
   const theAdapter = io.of('/').adapter; 
   io.use((wsSession, next) => {

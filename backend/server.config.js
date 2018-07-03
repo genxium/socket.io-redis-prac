@@ -12,15 +12,17 @@ module.exports = {
     merge_logs: true,
     log_date_format: "YYYY-MM-DD HH:mm Z",
     log_file: baseAbsPath + "../logs/api_merged.log", // Piping "stdout+stderr".
+    env_development: {
+      "NODE_ENV": "development",
+    },
     env_test: {
       "TESTING": "true",
       "NODE_ENV": "development",
     },
-    env_development: {
+    env_stress_test: {
+      "TESTING": "true",
+      "STRESS_TESTING": "true",
       "NODE_ENV": "development",
-    },
-    env_staging: {
-      "NODE_ENV": "staging",
     },
     env_production : {
       "NODE_ENV": "production"
