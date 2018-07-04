@@ -4,23 +4,10 @@ const Logger = require(baseAbsPath + "utils/Logger");
 const logger = Logger.instance.getLogger();
 const util = require('util');
 const crypto = require('crypto');
-function randomEleFromArray(arr) {
-  const buf = Buffer.from(crypto.randomBytes(4));
-  const idx = (buf.readUInt32LE() % arr.length);
-  return arr[idx];
-}
 
 const express = require('express');
 const app = express();
 const http = require('http').Server(app);
-
-function findUser(wsSessionHandshake) {
-  // TODO: Make a genuine authentication.
-  const userId = wsSessionHandshake.query.userid;
-  return {
-    id: userId
-  };
-}
 
 /*
 * Initialization of `socket.io-server` under a `worker-process` launched & managed by `pm2`. 
@@ -76,6 +63,21 @@ app.get(constants.ROUTE_PATHS.BASE + constants.ROUTE_PATHS.REGEX + constants.ROU
 
 const port = 9099;
 http.listen(port, function() {
+
+  const randomEleFromArray = (arr) => {
+    const buf = Buffer.from(crypto.randomBytes(4));
+    const idx = (buf.readUInt32LE() % arr.length);
+    return arr[idx];
+  };
+
+  const findUser = (wsSessionHandshake) => {
+    // TODO: Make a genuine authentication.
+    const userId = wsSessionHandshake.query.userid;
+    return {
+      id: userId
+    };
+  };
+
   const theAdapter = io.of('/').adapter; 
   io.use((wsSession, next) => {
     const user = findUser(wsSession.handshake);
@@ -97,8 +99,8 @@ http.listen(port, function() {
       logger.info(util.format("Uid == %s has joined roomid == %s via pid == %s.", uid, roomid, process.pid));
     });
 
-   wsSession.on("message", (msg) => {
-      logger.debug(`Received message ${JSON.stringify(msg)} from a wsSession managed by pid == ${process.pid}.`);
+    wsSession.on("message", (msg) => {
+     logger.info(util.format("Received message %s from a wsSession of uid == %s managed by pid == %s.", JSON.stringify(msg), uid, process.pid));
       const toEchoMsg = {
         fromUserId: uid,
         toUserId: uid,
@@ -113,7 +115,7 @@ http.listen(port, function() {
   });
 
   try {
-    logger.info('Api service listening on port ' + port + '. ' + Date.now());
+    logger.info('Api service listening on port ' + port);
   } catch (err) {
     logger.error(err.stack);
   }

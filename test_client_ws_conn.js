@@ -3,8 +3,6 @@ const baseAbsPath = __dirname + '/';
 const Logger = require(baseAbsPath + "./backend/utils/Logger");
 const logger = Logger.instance.getLogger(__filename);
 
-const constants = require(baseAbsPath + "./common/constants");
-
 const argv = process.argv.slice(2);
 
 if (2 > argv.length) {
@@ -13,7 +11,8 @@ if (2 > argv.length) {
 }
 
 const host = 'localhost';
-const urlToConnect = 'http://' + host + ":9099";
+const port = 9099;
+const urlToConnect = 'http://' + host + ":" + port;
 const userid = argv[0];
 const roomid = argv[1];
 
@@ -32,8 +31,8 @@ const socket = require('socket.io-client')(urlToConnect, {
 
 socket.on('connect', function(){
   logger.info('Connected.');
-  setTimeout(function() {
-    logger.debug('Sending hello to server for echoing.');
+  setTimeout(() => {
+    logger.info('Sending hello to server for echoing.');
     const evtName = "message";
     socket.emit(evtName, "Hello");
   }, 1000);
