@@ -14,6 +14,7 @@ const http = require('http').Server(app);
 */
 const io = require('socket.io')(http, {
   path: '/sio',
+  transports: ['websocket'], // Force the client to upgrade to 'websocket' transport upon initial negotiation.
   pingInterval: 2000,
   pingTimeout: 2000
 });
@@ -61,6 +62,8 @@ app.get(constants.ROUTE_PATHS.BASE + constants.ROUTE_PATHS.REGEX + constants.ROU
   res.json(toRet);
 });
 
+let totJoinedUserCount = 0;
+
 const port = 9099;
 http.listen(port, function() {
 
@@ -89,18 +92,19 @@ http.listen(port, function() {
   io.on('connect', (wsSession) => {
     const uid = wsSession.user.id;
     const roomid = parseInt(wsSession.handshake.query.roomid);
-    logger.info(util.format("Uid == %s is requesting to join roomid == %s via pid == %s.", uid, roomid, process.pid));
+    // logger.info(util.format("Uid == %s is requesting to join roomid == %s via pid == %s.", uid, roomid, process.pid));
 
     theAdapter.remoteJoin(wsSession.id, roomid, (err) => {
       if (err) { 
         logger.error(err);
         return;
       }
-      logger.info(util.format("Uid == %s has joined roomid == %s via pid == %s.", uid, roomid, process.pid));
+      ++totJoinedUserCount;
+      logger.info(util.format("Uid == %s has joined roomid == %s via pid == %s. Now totJoinedUserCount = %d.", uid, roomid, process.pid, totJoinedUserCount));
     });
 
     wsSession.on("message", (msg) => {
-     logger.info(util.format("Received message %s from a wsSession of uid == %s managed by pid == %s.", JSON.stringify(msg), uid, process.pid));
+      // logger.info(util.format("Received message %s from a wsSession of uid == %s managed by pid == %s.", JSON.stringify(msg), uid, process.pid));
       const toEchoMsg = {
         fromUserId: uid,
         toUserId: uid,
@@ -109,8 +113,9 @@ http.listen(port, function() {
     });
 
     wsSession.on('disconnect', (reason) => {
+      --totJoinedUserCount;
       // There's no need to invoke `theAdapter.remoteLeave` for each joined `roomid` manually.
-      logger.info(util.format("Uid == %s has left roomid == %s via pid == %s.", uid, roomid, process.pid));
+      logger.info(util.format("Uid == %s has left roomid == %s via pid == %s. Now totJoinedUserCount == %d.", uid, roomid, process.pid, totJoinedUserCount));
     });
   });
 

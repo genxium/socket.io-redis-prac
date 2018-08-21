@@ -14,6 +14,11 @@ user.powershell@proj-root> $env:HOME = $env:USERPROFILE
 user.powershell@proj-root> pm2 install pm2-logrotate
 ```
 
+# Starts the stressing-client
+```
+proj-root> node test_client_ws_conn.js 
+```
+
 # References
 - https://github.com/genxium/pm2-cluster-mode-logging-prac.
 - https://github.com/genxium/nodejs-cluster-prac
